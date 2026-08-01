@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>¿Salimos?</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #feada6 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      padding: 20px;
+    }
+
+    /* Fondo animado con brillitos flotantes */
+    .bg-sparkles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .sparkle {
+      position: absolute;
+      list-style: none;
+      display: block;
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.4);
+      bottom: -150px;
+      animation: animate 20s infinite linear;
+      border-radius: 50%;
+    }
+
+    .sparkle:nth-child(1) { left: 25%; width: 25px; height: 25px; animation-delay: 0s; }
+    .sparkle:nth-child(2) { left: 10%; width: 15px; height: 15px; animation-delay: 2s; animation-duration: 12s; }
+    .sparkle:nth-child(3) { left: 70%; width: 20px; height: 20px; animation-delay: 4s; }
+    .sparkle:nth-child(4) { left: 40%; width: 30px; height: 30px; animation-delay: 0s; animation-duration: 18s; }
+    .sparkle:nth-child(5) { left: 65%; width: 15px; height: 15px; animation-delay: 0s; }
+    .sparkle:nth-child(6) { left: 75%; width: 25px; height: 25px; animation-delay: 3s; }
+
+    @keyframes animate {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 50%;
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+      }
+    }
+
+    /* Tarjeta principal */
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(10px);
+      padding: 35px 25px;
+      border-radius: 25px;
+      box-shadow: 0 15px 35px rgba(220, 53, 69, 0.2);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      animation: fadeIn 0.8s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h1 {
+      color: #ff3366;
+      font-size: 26px;
+      margin-bottom: 15px;
+    }
+
+    h2 {
+      color: #ff3366;
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+
+    p {
+      color: #555;
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .btn-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-top: 25px;
+      min-height: 60px;
+      position: relative;
+    }
+
+    .btn {
+      padding: 14px 28px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+      outline: none;
+    }
+
+    .btn-yes {
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      color: white;
+      box-shadow: 0 6px 20px rgba(255, 65, 108, 0.4);
+    }
+
+    .btn-no {
+      background: #6c757d;
+      color: white;
+      position: absolute;
+      z-index: 20;
+      touch-action: none;
+    }
+
+    .step { display: none; }
+
+    .step.active {
+      display: block;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    select, input[type="datetime-local"] {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 15px;
+      border: 2px solid #ffccd5;
+      margin: 15px 0;
+      background: #fff;
+      color: #333;
+      outline: none;
+    }
+
+    .decoration-icon {
+      font-size: 50px;
+      margin-bottom: 10px;
+      display: inline-block;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .final-box {
+      background: #fff0f3;
+      padding: 20px;
+      border-radius: 15px;
+      border: 1px dashed #ff416c;
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Fondo de brillitos -->
+  <ul class="bg-sparkles">
+    <li class="sparkle"></li>
+    <li class="sparkle"></li>
+    <li class="sparkle"></li>
+    <li class="sparkle"></li>
+    <li class="sparkle"></li>
+    <li class="sparkle"></li>
+  </ul>
+
+  <div class="card">
+    <!-- Paso 1 -->
+    <div id="step1" class="step active">
+      <div class="decoration-icon">💖✨</div>
+      <h1>¿Quieres salir conmigo?</h1>
+      <p>Tengo una propuesta especial para ti... ¿Aceptas?</p>
+      
+      <div class="btn-container">
+        <button class="btn btn-yes" onclick="nextStep(2)">¡Sí! 😍</button>
+        <button class="btn btn-no" id="btnNo" ontouchstart="moveButton()" onmouseover="moveButton()">No 😜</button>
+      </div>
+    </div>
+
+    <!-- Paso 2 -->
+    <div id="step2" class="step">
+      <div class="decoration-icon">📅✨</div>
+      <h2>¡Sabía que dirías que sí! 🥰</h2>
+      <p>Elige el día y la hora que mejor te acomode:</p>
+      <input type="datetime-local" id="dateTime">
+      <button class="btn btn-yes" style="width: 100%; margin-top: 10px;" onclick="saveDateTime()">Siguiente 👉</button>
+    </div>
+
+    <!-- Paso 3 -->
+    <div id="step3" class="step">
+      <div class="decoration-icon">🍕🎬✨</div>
+      <h2>¿Qué plan te gusta más?</h2>
+      <select id="activity">
+        <option value="ir a comer algo super delicioso 🍕">Ir a comer algo rico 🍕</option>
+        <option value="ir al cine a ver una peli genial 🍿">Ir al cine 🍿</option>
+        <option value="dar una caminata bonita y platicar 🌳">Caminar y platicar 🌳</option>
+        <option value="ponernos a dibujar y crear cosas divertidas 🎨">Dibujar juntos 🎨</option>
+      </select>
+      <button class="btn btn-yes" style="width: 100%; margin-top: 10px;" onclick="showFinal()">Confirmar Plan 🎉</button>
+    </div>
+
+    <!-- Paso 4 -->
+    <div id="step4" class="step">
+      <div class="decoration-icon">🎉🥳💖</div>
+      <h2>¡Trato Hecho!</h2>
+      <div class="final-box">
+        <p id="finalMessage"></p>
+      </div>
+      <p style="margin-top: 15px; font-size: 14px; color: #777;">¡Ya lo anoté en mi calendario! 😉</p>
+    </div>
+  </div>
+
+  <script>
+    let selectedDate = '';
+
+    function moveButton() {
+      const btnNo = document.getElementById('btnNo');
+      const container = document.body;
+      
+      const maxX = container.clientWidth - btnNo.offsetWidth - 30;
+      const maxY = container.clientHeight - btnNo.offsetHeight - 30;
+      
+      const randomX = Math.max(15, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(15, Math.floor(Math.random() * maxY));
+      
+      btnNo.style.position = 'fixed';
+      btnNo.style.left = randomX + 'px';
+      btnNo.style.top = randomY + 'px';
+    }
+
+    function nextStep(stepNumber) {
+      document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+      document.getElementById('step' + stepNumber).classList.add('active');
+    }
+
+    function saveDateTime() {
+      const dateVal = document.getElementById('dateTime').value;
+      if (!dateVal) {
+        alert('Por favor selecciona una fecha y hora 📅');
+        return;
+      }
+      const dateObj = new Date(dateVal);
+      selectedDate = dateObj.toLocaleString('es-MX', { 
+        dateStyle: 'full', 
+        timeStyle: 'short' 
+      });
+      nextStep(3);
+    }
+
+    function showFinal() {
+      const activity = document.getElementById('activity').value;
+      const message = `Nos vemos el <b>${selectedDate}</b> para <b>${activity}</b>. ¡Promete ser un día increíble! ✨`;
+      document.getElementById('finalMessage').innerHTML = message;
+      nextStep(4);
+    }
+  </script>
+</body>
+</html>
