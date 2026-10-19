@@ -1,0 +1,354 @@
+```html
+<!DOCTYPE html>
+<html lang="es" class="h-full w-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo ISO 9000 - Ingeniería Textil</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- D3.js v7 CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+    <!-- FontAwesome CDN para iconos -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Fuente Inter de Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        slate: {
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #020617;
+            font-family: 'Inter', sans-serif;
+            color: #f8fafc;
+        }
+
+        /* Deshabilitar comportamientos táctiles por defecto en canvas SVG */
+        svg {
+            touch-action: none;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        /* Animación para enlaces de flujo */
+        .link-flow {
+            stroke-dasharray: 6, 6;
+            animation: dash 12s linear infinite;
+        }
+
+        @keyframes dash {
+            to {
+                stroke-dashoffset: -100;
+            }
+        }
+
+        /* Estilo para barra de desplazamiento en el panel lateral */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(51, 65, 85, 0.8);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(71, 85, 105, 1);
+        }
+
+        /* Transición fluida para el panel lateral / Bottom Sheet */
+        .panel-transition {
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Efecto de resplandor Neón en nodos */
+        .node-glow {
+            filter: drop-shadow(0px 0px 8px currentColor);
+        }
+    </style>
+</head>
+<body class="bg-slate-950 text-slate-100 flex flex-col h-full w-full overflow-hidden select-none">
+
+    <!-- HEADER / BARRA SUPERIOR DE CONTROL -->
+    <header class="absolute top-0 left-0 right-0 z-30 p-4 pointer-events-none flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+        <!-- Marca y Título -->
+        <div class="pointer-events-auto bg-slate-900/85 backdrop-blur-md border border-slate-800/80 p-3.5 rounded-2xl shadow-2xl flex items-center gap-3.5">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/25">
+                <i class="fa-solid fa-shirt"></i>
+            </div>
+            <div>
+                <h1 class="font-extrabold text-base md:text-lg text-white leading-tight tracking-tight">ISO 9000 · Ingeniería Textil</h1>
+                <p class="text-xs text-indigo-400 font-medium flex items-center gap-1.5">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse inline-block"></span>
+                    Sistemas de Gestión de Calidad (SGC)
+                </p>
+            </div>
+        </div>
+
+        <!-- Controles: Buscador, Filtro por Categoría y Tour -->
+        <div class="pointer-events-auto flex flex-wrap items-center gap-2 bg-slate-900/85 backdrop-blur-md border border-slate-800/80 p-2 rounded-2xl shadow-2xl w-full md:w-auto">
+            <!-- Buscador en Tiempo Real -->
+            <div class="relative flex-1 md:w-56">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="searchInput" placeholder="Buscar concepto o ensayo..." 
+                    class="w-full bg-slate-950/80 border border-slate-800 text-xs text-white rounded-xl pl-8 pr-3 py-2 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all placeholder:text-slate-500">
+            </div>
+
+            <!-- Filtro de Categoría -->
+            <select id="categoryFilter" class="bg-slate-950/80 border border-slate-800 text-xs text-slate-200 rounded-xl px-3 py-2 focus:outline-none focus:border-indigo-500 cursor-pointer transition-all">
+                <option value="all">Todas las Categorías</option>
+                <option value="principios">1. Principios de Gestión</option>
+                <option value="procesos">2. Procesos Textiles</option>
+                <option value="inspeccion">3. Control e Inspección</option>
+                <option value="auditoria">4. Auditoría y Mejora</option>
+                <option value="normativa">5. Normativa y Doc.</option>
+            </select>
+
+            <!-- Botón del Tour Guiado -->
+            <button id="tourBtn" class="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold text-xs px-3.5 py-2 rounded-xl flex items-center gap-2 shadow-lg shadow-indigo-600/20 transition-all active:scale-95">
+                <i class="fa-solid fa-compass"></i>
+                <span class="hidden sm:inline">Tour Guiado</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- LIENZO SVG PARA EL GRAFO D3 -->
+    <main class="relative w-full h-full flex-1">
+        <svg id="graphSvg" class="w-full h-full cursor-grab active:cursor-grabbing"></svg>
+
+        <!-- DEFICIONES DE FILTROS SVG PARA EFECTO NEÓN -->
+        <svg style="height:0; width:0; position:absolute;">
+            <defs>
+                <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feGaussianBlur stdDeviation="5" result="blur" />
+                    <feMerge>
+                        <feMergeNode in="blur" />
+                        <feMergeNode in="SourceGraphic" />
+                    </feMerge>
+                </filter>
+            </defs>
+        </svg>
+
+        <!-- CONTROLES FLOTANTES DE NAVEGACIÓN Y FÍSICA -->
+        <div class="absolute bottom-6 left-6 z-20 flex flex-col gap-2">
+            <div class="bg-slate-900/85 backdrop-blur-md border border-slate-800 p-1.5 rounded-2xl shadow-2xl flex flex-col gap-1">
+                <button id="zoomInBtn" title="Acercar (Zoom In)" class="w-9 h-9 rounded-xl hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90">
+                    <i class="fa-solid fa-plus text-sm"></i>
+                </button>
+                <button id="zoomOutBtn" title="Alejar (Zoom Out)" class="w-9 h-9 rounded-xl hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90">
+                    <i class="fa-solid fa-minus text-sm"></i>
+                </button>
+                <button id="resetZoomBtn" title="Restablecer Vista" class="w-9 h-9 rounded-xl hover:bg-slate-800 text-slate-300 hover:text-white flex items-center justify-center transition-all active:scale-90">
+                    <i class="fa-solid fa-expand text-sm"></i>
+                </button>
+                <hr class="border-slate-800 my-0.5">
+                <button id="togglePhysicsBtn" title="Pausar/Reanudar Simulación Física" class="w-9 h-9 rounded-xl hover:bg-slate-800 text-indigo-400 hover:text-indigo-300 flex items-center justify-center transition-all active:scale-90">
+                    <i class="fa-solid fa-pause text-sm" id="physicsIcon"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- LEYENDA CROMÁTICA -->
+        <div class="absolute bottom-6 right-6 z-10 hidden lg:flex items-center gap-3.5 bg-slate-900/85 backdrop-blur-md border border-slate-800 px-4 py-2.5 rounded-2xl text-xs text-slate-300 shadow-2xl">
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-indigo-500 inline-block shadow-sm shadow-indigo-500/50"></span> Hub ISO</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-sky-400 inline-block shadow-sm shadow-sky-400/50"></span> Principios</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-emerald-400 inline-block shadow-sm shadow-emerald-400/50"></span> Procesos</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-amber-400 inline-block shadow-sm shadow-amber-400/50"></span> Inspección</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-rose-400 inline-block shadow-sm shadow-rose-400/50"></span> Auditoría</div>
+            <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded-full bg-purple-400 inline-block shadow-sm shadow-purple-400/50"></span> Normativa</div>
+        </div>
+    </main>
+
+    <!-- PANEL LATERAL / BOTTOM SHEET INSPECTOR DE NODO -->
+    <aside id="detailPanel" class="fixed z-40 bg-slate-900/95 backdrop-blur-2xl border-slate-800/90 shadow-2xl panel-transition custom-scrollbar overflow-y-auto
+                bottom-0 left-0 right-0 max-h-[85vh] rounded-t-3xl border-t p-6 translate-y-full
+                md:top-0 md:right-0 md:left-auto md:w-[460px] md:h-full md:max-h-full md:rounded-l-3xl md:rounded-tr-none md:border-l md:border-t-0 md:translate-y-0 md:translate-x-full">
+        
+        <!-- Indicador táctil para dispositivos móviles -->
+        <div class="w-12 h-1.5 bg-slate-700/80 rounded-full mx-auto mb-4 md:hidden"></div>
+
+        <!-- Cabecera del Panel -->
+        <div class="flex justify-between items-start gap-3 mb-4">
+            <div>
+                <span id="panelBadge" class="inline-block text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 mb-2">
+                    CATEGORÍA
+                </span>
+                <h2 id="panelTitle" class="text-xl md:text-2xl font-extrabold text-white leading-tight">
+                    Nombre del Concepto
+                </h2>
+            </div>
+            <button id="closePanelBtn" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-400 hover:text-white flex items-center justify-center transition-all flex-shrink-0">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <hr class="border-slate-800/80 mb-5">
+
+        <!-- Contenido Técnico Didáctico -->
+        <div class="space-y-5 text-sm">
+            <!-- 1. Definición Conceptual Rigurosa -->
+            <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-microscope text-indigo-400"></i> Definición Conceptual Textil
+                </h3>
+                <p id="panelMeaning" class="text-slate-300 leading-relaxed bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                    Cargando definición...
+                </p>
+            </div>
+
+            <!-- 2. Importancia e Impacto Industrial -->
+            <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-400"></i> Importancia e Riesgos Industriales
+                </h3>
+                <p id="panelImportance" class="text-slate-300 leading-relaxed bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                    Cargando importancia...
+                </p>
+            </div>
+
+            <!-- 3. Aplicación Práctica en Planta -->
+            <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2 flex items-center gap-2">
+                    <i class="fa-solid fa-industry text-emerald-400"></i> Caso Práctico en Planta
+                </h3>
+                <p id="panelPractical" class="text-slate-300 leading-relaxed bg-slate-950/60 p-4 rounded-2xl border border-slate-800/80">
+                    Cargando caso práctico...
+                </p>
+            </div>
+
+            <!-- 4. Conceptos Vinculados (Chips Interactivos) -->
+            <div>
+                <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2.5 flex items-center gap-2">
+                    <i class="fa-solid fa-network-wired text-purple-400"></i> Nodos Interconectados
+                </h3>
+                <div id="panelRelated" class="flex flex-wrap gap-2">
+                    <!-- Nodos relacionados cargados dinámicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Acciones del Panel -->
+        <div class="mt-8 pt-4 border-t border-slate-800/80">
+            <button id="focusNodeBtn" class="w-full bg-slate-800 hover:bg-slate-700 text-indigo-300 font-semibold py-2.5 px-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-95 shadow-lg">
+                <i class="fa-solid fa-crosshairs"></i> Enfocar y Centrar en la Red
+            </button>
+        </div>
+    </aside>
+
+    <!-- SCRIPT PRINCIPAL: D3.JS Y LÓGICA DE INTERACCIÓN -->
+    <script>
+        // ==========================================
+        // 1. MODELO DE DATOS NORMALIZADO
+        // ==========================================
+        const graphData = {
+            nodes: [
+                // HUB CENTRAL
+                {
+                    id: "iso_9000_textil",
+                    title: "ISO 9000 en la Industria Textil",
+                    shortLabel: "ISO 9000\nTEXTIL",
+                    phase: "root",
+                    badge: "HUB CENTRAL",
+                    hierarchyLevel: 1,
+                    isHub: true,
+                    radius: 46,
+                    color: "#6366f1",
+                    meaning: "Sistema de Gestión de la Calidad (SGC) diseñado para estandarizar los procesos de diseño, hilatura, tejeduría, tintorería, acabado y confección textil bajo estándares internacionales.",
+                    importance: "Sin la norma ISO 9000, la variabilidad natural de las fibras (algodón, lana, sintéticos) genera mermas masivas, no conformidades de tono y rechazo de exportaciones.",
+                    practical: "Una hilandería certificada ISO 9000 logra reducir su nivel de defectos a menos de 1.5 Uster %, habilitándola como proveedora directa de marcas globales.",
+                    related: ["principios_gestion", "procesos_textiles", "control_inspeccion", "auditoria_mejora", "normativa_doc"]
+                },
+
+                // CLÚSTER 1: PRINCIPIOS DE GESTIÓN DE CALIDAD
+                {
+                    id: "principios_gestion",
+                    title: "Principios de Gestión de la Calidad",
+                    shortLabel: "Principios\nGestión",
+                    phase: "principios",
+                    badge: "CLÚSTER 1",
+                    hierarchyLevel: 2,
+                    isPhase: true,
+                    radius: 36,
+                    color: "#38bdf8",
+                    meaning: "Los 7 pilares normativos de la ISO 9001:2015 adaptados al liderazgo, compromiso del personal y enfoque al cliente en el sector textil.",
+                    importance: "Establecen la cultura organizacional requerida para evitar trabajar en 'islas operativas' entre hilandería, tejeduría y tintorería.",
+                    practical: "Sensibilización y capacitación del personal operario de telares en la identificación temprana de defectos de trama.",
+                    related: ["iso_9000_textil", "enfoque_cliente", "liderazgo_textil", "enfoque_procesos"]
+                },
+                {
+                    id: "enfoque_cliente",
+                    title: "Enfoque al Cliente y Requisitos Físicos",
+                    shortLabel: "Enfoque\nCliente",
+                    phase: "principios",
+                    badge: "Principio SGC",
+                    hierarchyLevel: 3,
+                    radius: 26,
+                    color: "#38bdf8",
+                    meaning: "Identificación metódica de los requisitos del cliente expresados en Fichas Técnicas: gramaje (g/m²), solidez de color, encogimiento y mano/tacto.",
+                    importance: "Si la tela cumple las especificaciones mecánicas pero no el grado de blanco o la solidez deseada por el confeccionista, el lote entero es rechazado.",
+                    practical: "Traducción de la muestra homologada por el cliente en parámetros de telar (pasaadas/pulgada) y fórmula de acabado en rama tensora.",
+                    related: ["principios_gestion", "control_tintoreria", "ensayos_fisico_mecanicos"]
+                },
+                {
+                    id: "liderazgo_textil",
+                    title: "Liderazgo y Política de Calidad",
+                    shortLabel: "Liderazgo\ny Política",
+                    phase: "principios",
+                    badge: "Principio SGC",
+                    hierarchyLevel: 3,
+                    radius: 25,
+                    color: "#38bdf8",
+                    meaning: "Compromiso de la alta dirección para suministrar recursos en metrología textil, automatización de cocinas de colorantes y capacitación.",
+                    importance: "Evita que las metas de producción cuantitativa (metros/hora) comprometan la calidad del producto terminado.",
+                    practical: "Aprobación de presupuesto para la adquisición de un espectrofotómetro de corte industrial y un sistema de control estadístico SPC.",
+                    related: ["principios_gestion", "auditoria_mejora"]
+                },
+                {
+                    id: "enfoque_procesos",
+                    title: "Enfoque Basado en Procesos (SIPOC)",
+                    shortLabel: "Enfoque a\nProcesos",
+                    phase: "principios",
+                    badge: "Principio SGC",
+                    hierarchyLevel: 3,
+                    radius: 26,
+                    color: "#38bdf8",
+                    meaning: "Gestión de la cadena textil como un sistema continuo interactivo: Apertura -> Cardado -> Peinado -> Estiraje -> Hilatura -> Tejeduría -> Acabado.",
+                    importance: "Un error no detectado en el manuar (estiraje) se multiplica en la tejeduría produciendo barrados irreparables.",
+                    practical: "Mapeo de entradas, salidas e indicadores clave de rendimiento (KPI) en el proceso de engomado de urdimbres.",
+                    related: ["principios_gestion", "calidad_hilanderia", "trazabilidad_textil"]
+                },
+
+                // CLÚSTER 2: GESTIÓN DE PROCESOS TEXTILES
+                {
+                    id: "procesos_textiles",
+                    title: "Gestión de Procesos Textiles",
+                    shortLabel: "Procesos\nTextiles",
+                    phase: "procesos",
+                    badge: "CLÚSTER 2",
+                    hierarchyLevel: 2,
+                    isPhase: true,
+                    radius: 36,
+                    color: "#34d399",
+                    meaning: "Estandarización y control operativo de las variables críticas en las etapas de transformación física y química de la fibra.",
+                    importance: "Asegur
