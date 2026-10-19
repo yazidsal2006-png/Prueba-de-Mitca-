@@ -306,7 +306,7 @@
                     color: "#38bdf8",
                     meaning: "Identificación metódica de los requisitos del cliente expresados en Fichas Técnicas: gramaje (g/m²), solidez de color, encogimiento y mano/tacto.",
                     importance: "Si la tela cumple las especificaciones mecánicas pero no el grado de blanco o la solidez deseada por el confeccionista, el lote entero es rechazado.",
-                    practical: "Traducción de la muestra homologada por el cliente en parámetros de telar (pasaadas/pulgada) y fórmula de acabado en rama tensora.",
+                    practical: "Traducción de la muestra homologada por el cliente en parámetros de telar (pasadas/pulgada) y fórmula de acabado en rama tensora.",
                     related: ["principios_gestion", "control_tintoreria", "ensayos_fisico_mecanicos"]
                 },
                 {
@@ -335,7 +335,7 @@
                     meaning: "Gestión de la cadena textil como un sistema continuo interactivo: Apertura -> Cardado -> Peinado -> Estiraje -> Hilatura -> Tejeduría -> Acabado.",
                     importance: "Un error no detectado en el manuar (estiraje) se multiplica en la tejeduría produciendo barrados irreparables.",
                     practical: "Mapeo de entradas, salidas e indicadores clave de rendimiento (KPI) en el proceso de engomado de urdimbres.",
-                    related: ["principios_gestion", "calidad_hilanderia", "trazabilidad_textil"]
+                    related: ["principios_gestion", "procesos_textiles", "trazabilidad_textil"]
                 },
 
                 // CLÚSTER 2: GESTIÓN DE PROCESOS TEXTILES
@@ -350,4 +350,403 @@
                     radius: 36,
                     color: "#34d399",
                     meaning: "Estandarización y control operativo de las variables críticas en las etapas de transformación física y química de la fibra.",
-                    importance: "Asegur
+                    importance: "Asegura la estabilidad operacional reduciendo variaciones de tensión, humedad y concentración de insumos químicos.",
+                    practical: "Control estricto de temperatura y pH en barcas de tintura de agotamiento para fibras celulósicas.",
+                    related: ["iso_9000_textil", "enfoque_procesos", "control_tintoreria", "ensayos_fisico_mecanicos"]
+                },
+                {
+                    id: "control_tintoreria",
+                    title: "Control de Tintorería y Acabados",
+                    shortLabel: "Tintorería y\nAcabados",
+                    phase: "procesos",
+                    badge: "Proceso Clave",
+                    hierarchyLevel: 3,
+                    radius: 28,
+                    color: "#34d399",
+                    meaning: "Procesos húmedos textiles donde se aplica color, suavizado, fijación y tratamientos funcionales (impermeabilizado, ignífugo).",
+                    importance: "Son procesos irreversibles; un mal teñido implica reprocesos costosos que degradan la tenacidad del tejido.",
+                    practical: "Uso de curva de teñido automatizada con ramping controlado de temperatura para evitar metamerismo.",
+                    related: ["procesos_textiles", "enfoque_cliente", "control_inspeccion"]
+                },
+
+                // CLÚSTER 3: CONTROL E INSPECCIÓN
+                {
+                    id: "control_inspeccion",
+                    title: "Control e Inspección de Calidad",
+                    shortLabel: "Control e\nInspección",
+                    phase: "inspeccion",
+                    badge: "CLÚSTER 3",
+                    hierarchyLevel: 2,
+                    isPhase: true,
+                    radius: 36,
+                    color: "#fbbf24",
+                    meaning: "Verificación del cumplimiento de parámetros de calidad mediante ensayos de laboratorio e inspección visual en revisadoras.",
+                    importance: "Filtra defectos antes del despacho al cliente, previniendo penalizaciones económicas y devoluciones de lote.",
+                    practical: "Inspección de tela cruda sobre mesa iluminada asignando puntos de penalización según el sistema de 4 puntos ASTM D5430.",
+                    related: ["iso_9000_textil", "control_tintoreria", "ensayos_fisico_mecanicos"]
+                },
+                {
+                    id: "ensayos_fisico_mecanicos",
+                    title: "Ensayos Físico-Mecánicos",
+                    shortLabel: "Ensayos\nFísicos",
+                    phase: "inspeccion",
+                    badge: "Laboratorio",
+                    hierarchyLevel: 3,
+                    radius: 27,
+                    color: "#fbbf24",
+                    meaning: "Pruebas estandarizadas de resistencia a la tracción, rasgado, pilling, solidez a la luz y frote (Crockmeter).",
+                    importance: "Garantizan el rendimiento estructural y durabilidad del tejido durante su vida útil.",
+                    practical: "Prueba de pilling en Martindale a 2000 ciclos comprobando la ausencia de motas en superficie.",
+                    related: ["control_inspeccion", "enfoque_cliente", "normativa_doc"]
+                },
+
+                // CLÚSTER 4: AUDITORÍA Y MEJORA
+                {
+                    id: "auditoria_mejora",
+                    title: "Auditoría y Mejora Continua",
+                    shortLabel: "Auditoría y\nMejora",
+                    phase: "auditoria",
+                    badge: "CLÚSTER 4",
+                    hierarchyLevel: 2,
+                    isPhase: true,
+                    radius: 36,
+                    color: "#f87171",
+                    meaning: "Evaluación sistemática e independiente para verificar la efectividad del SGC y aplicar el ciclo PHVA (Planear, Hacer, Verificar, Actuar).",
+                    importance: "Permite detectar no conformidades potenciales y evitar la recurrencia de fallas de calidad.",
+                    practical: "Ejecución de auditorías internas semestrales en las áreas de hilandería, tejeduría y acabado.",
+                    related: ["iso_9000_textil", "liderazgo_textil", "normativa_doc"]
+                },
+
+                // CLÚSTER 5: NORMATIVA Y DOCUMENTACIÓN
+                {
+                    id: "normativa_doc",
+                    title: "Normativa y Documentación SGC",
+                    shortLabel: "Normativa y\nDoc.",
+                    phase: "normativa",
+                    badge: "CLÚSTER 5",
+                    hierarchyLevel: 2,
+                    isPhase: true,
+                    radius: 36,
+                    color: "#c084fc",
+                    meaning: "Estructura documental integrada por Manual de Calidad, Procedimientos Operativos Estándar (POE), Fichas Técnicas y Registros.",
+                    importance: "Asegura la trazabilidad y la estandarización del conocimiento técnico frente a la rotación de personal.",
+                    practical: "Creación de Fichas Técnicas normalizadas ISO para cada artículo de línea en la planta de tejido de punto.",
+                    related: ["iso_9000_textil", "ensayos_fisico_mecanicos", "auditoria_mejora"]
+                }
+            ]
+        };
+
+        // Generar enlaces dinámicamente según la propiedad 'related'
+        const linksSet = new Set();
+        const links = [];
+
+        graphData.nodes.forEach(sourceNode => {
+            if (sourceNode.related) {
+                sourceNode.related.forEach(targetId => {
+                    const pair = [sourceNode.id, targetId].sort().join("---");
+                    if (!linksSet.has(pair)) {
+                        linksSet.add(pair);
+                        links.push({
+                            source: sourceNode.id,
+                            target: targetId,
+                            isCore: sourceNode.isHub || graphData.nodes.find(n => n.id === targetId)?.isHub
+                        });
+                    }
+                });
+            }
+        });
+
+        // ==========================================
+        // 2. CONFIGURACIÓN DEL SVG Y SIMULACIÓN D3
+        // ==========================================
+        const svg = d3.select("#graphSvg");
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+
+        const gContainer = svg.append("g").attr("id", "zoomContainer");
+
+        // Zoom Behavior
+        const zoom = d3.zoom()
+            .scaleExtent([0.3, 3])
+            .on("zoom", (event) => {
+                gContainer.attr("transform", event.transform);
+            });
+
+        svg.call(zoom);
+
+        // Capas para Renderizado Correcto
+        const linksGroup = gContainer.append("g").attr("class", "links-layer");
+        const nodesGroup = gContainer.append("g").attr("class", "nodes-layer");
+
+        // Simulación de Fuerzas
+        const simulation = d3.forceSimulation(graphData.nodes)
+            .force("link", d3.forceLink(links).id(d => d.id).distance(d => d.isCore ? 140 : 100))
+            .force("charge", d3.forceManyBody().strength(-450))
+            .force("center", d3.forceCenter(width / 2, height / 2))
+            .force("collision", d3.forceCollide().radius(d => d.radius + 18));
+
+        // ==========================================
+        // 3. RENDERIZADO DE ENLACES Y NODOS
+        // ==========================================
+        const linkElement = linksGroup.selectAll("line")
+            .data(links)
+            .enter()
+            .append("line")
+            .attr("stroke", d => d.isCore ? "rgba(99, 102, 241, 0.4)" : "rgba(148, 163, 184, 0.2)")
+            .attr("stroke-width", d => d.isCore ? 2.5 : 1.5)
+            .attr("class", d => d.isCore ? "link-flow" : "");
+
+        // Grupo contenedor de cada Nodo (Círculo + Texto)
+        const nodeElement = nodesGroup.selectAll("g")
+            .data(graphData.nodes)
+            .enter()
+            .append("g")
+            .attr("class", "cursor-pointer")
+            .call(d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended));
+
+        // Círculo Base del Nodo
+        nodeElement.append("circle")
+            .attr("r", d => d.radius)
+            .attr("fill", d => d.color)
+            .attr("fill-opacity", 0.25)
+            .attr("stroke", d => d.color)
+            .attr("stroke-width", d => d.isHub ? 3 : 2)
+            .attr("class", "transition-all duration-300 hover:scale-110");
+
+        // Círculo Interior Decorativo para el Hub / Fases
+        nodeElement.filter(d => d.isHub || d.isPhase)
+            .append("circle")
+            .attr("r", d => d.radius - 6)
+            .attr("fill", "none")
+            .attr("stroke", d => d.color)
+            .attr("stroke-width", 1)
+            .attr("stroke-dasharray", "3 3");
+
+        // Texto Multilínea dentro del Círculo
+        nodeElement.each(function(d) {
+            const el = d3.select(this);
+            const lines = d.shortLabel.split('\n');
+            const fontSize = d.isHub ? 11 : (d.isPhase ? 10 : 9);
+            
+            const text = el.append("text")
+                .attr("text-anchor", "middle")
+                .attr("fill", "#ffffff")
+                .attr("font-size", `${fontSize}px`)
+                .attr("font-weight", d.isHub || d.isPhase ? "700" : "500")
+                .attr("pointer-events", "none");
+
+            const startY = -((lines.length - 1) * (fontSize * 1.2)) / 2;
+
+            lines.forEach((line, i) => {
+                text.append("tspan")
+                    .attr("x", 0)
+                    .attr("y", startY + (i * fontSize * 1.2))
+                    .attr("dy", "0.3em")
+                    .text(line);
+            });
+        });
+
+        // Actualización en cada 'Tick' de la Física
+        simulation.on("tick", () => {
+            linkElement
+                .attr("x1", d => d.source.x)
+                .attr("y1", d => d.source.y)
+                .attr("x2", d => d.target.x)
+                .attr("y2", d => d.target.y);
+
+            nodeElement
+                .attr("transform", d => `translate(${d.x}, ${d.y})`);
+        });
+
+        // Centrado Inicial de la Vista
+        resetZoom();
+
+        // ==========================================
+        // 4. INTERACTIVIDAD Y MANEJO DEL PANEL
+        // ==========================================
+        let selectedNode = null;
+
+        nodeElement.on("click", (event, d) => {
+            event.stopPropagation();
+            openPanel(d);
+        });
+
+        svg.on("click", () => {
+            closePanel();
+        });
+
+        function openPanel(d) {
+            selectedNode = d;
+            
+            // Llenar contenido
+            document.getElementById("panelBadge").innerText = d.badge;
+            document.getElementById("panelBadge").style.color = d.color;
+            document.getElementById("panelBadge").style.borderColor = d.color + "40";
+            document.getElementById("panelBadge").style.backgroundColor = d.color + "15";
+
+            document.getElementById("panelTitle").innerText = d.title;
+            document.getElementById("panelMeaning").innerText = d.meaning;
+            document.getElementById("panelImportance").innerText = d.importance;
+            document.getElementById("panelPractical").innerText = d.practical;
+
+            // Nodos relacionados
+            const relatedContainer = document.getElementById("panelRelated");
+            relatedContainer.innerHTML = "";
+            if (d.related) {
+                d.related.forEach(relId => {
+                    const relNode = graphData.nodes.find(n => n.id === relId);
+                    if (relNode) {
+                        const chip = document.createElement("button");
+                        chip.className = "text-xs px-2.5 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 transition-all active:scale-95";
+                        chip.innerText = relNode.title;
+                        chip.onclick = () => openPanel(relNode);
+                        relatedContainer.appendChild(chip);
+                    }
+                });
+            }
+
+            // Mostrar Panel
+            const panel = document.getElementById("detailPanel");
+            panel.classList.remove("translate-y-full", "md:translate-x-full");
+
+            // Resaltar nodo activo
+            nodeElement.select("circle")
+                .attr("stroke-width", n => n.id === d.id ? 5 : (n.isHub ? 3 : 2))
+                .attr("fill-opacity", n => n.id === d.id ? 0.5 : 0.25);
+        }
+
+        function closePanel() {
+            selectedNode = null;
+            const panel = document.getElementById("detailPanel");
+            panel.classList.add("translate-y-full", "md:translate-x-full");
+
+            nodeElement.select("circle")
+                .attr("stroke-width", d => d.isHub ? 3 : 2)
+                .attr("fill-opacity", 0.25);
+        }
+
+        document.getElementById("closePanelBtn").onclick = closePanel;
+
+        // Botón para centrar en nodo seleccionado
+        document.getElementById("focusNodeBtn").onclick = () => {
+            if (selectedNode) {
+                focusOnNode(selectedNode);
+            }
+        };
+
+        function focusOnNode(d) {
+            const scale = 1.3;
+            const x = width / 2 - d.x * scale;
+            const y = height / 2 - d.y * scale;
+
+            svg.transition()
+                .duration(750)
+                .call(zoom.transform, d3.zoomIdentity.translate(x, y).scale(scale));
+        }
+
+        // ==========================================
+        // 5. FILTROS, BÚSQUEDA Y NAVEGACIÓN
+        // ==========================================
+        // Búsqueda
+        document.getElementById("searchInput").addEventListener("input", (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            if (!query) {
+                nodeElement.style("opacity", 1);
+                linkElement.style("opacity", 1);
+                return;
+            }
+
+            nodeElement.style("opacity", d => {
+                const match = d.title.toLowerCase().includes(query) || d.meaning.toLowerCase().includes(query);
+                return match ? 1 : 0.15;
+            });
+
+            linkElement.style("opacity", 0.1);
+        });
+
+        // Filtro Categoria
+        document.getElementById("categoryFilter").addEventListener("change", (e) => {
+            const cat = e.target.value;
+            if (cat === "all") {
+                nodeElement.style("opacity", 1);
+                linkElement.style("opacity", 1);
+                return;
+            }
+
+            nodeElement.style("opacity", d => (d.phase === cat || d.isHub) ? 1 : 0.15);
+            linkElement.style("opacity", 0.15);
+        });
+
+        // Controles Zoom
+        document.getElementById("zoomInBtn").onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 1.25);
+        document.getElementById("zoomOutBtn").onclick = () => svg.transition().duration(300).call(zoom.scaleBy, 0.8);
+        document.getElementById("resetZoomBtn").onclick = resetZoom;
+
+        function resetZoom() {
+            svg.transition().duration(750).call(
+                zoom.transform,
+                d3.zoomIdentity.translate(0, 0).scale(1)
+            );
+        }
+
+        // Control Física Pausa/Reanudar
+        let isPhysicsRunning = true;
+        document.getElementById("togglePhysicsBtn").onclick = () => {
+            const icon = document.getElementById("physicsIcon");
+            if (isPhysicsRunning) {
+                simulation.stop();
+                icon.className = "fa-solid fa-play text-sm";
+            } else {
+                simulation.alpha(0.3).restart();
+                icon.className = "fa-solid fa-pause text-sm";
+            }
+            isPhysicsRunning = !isPhysicsRunning;
+        };
+
+        // Tour Guiado Interactivo
+        document.getElementById("tourBtn").onclick = () => {
+            let tourIndex = 0;
+            const tourNodes = graphData.nodes.filter(n => n.isPhase || n.isHub);
+
+            function nextTourStep() {
+                if (tourIndex >= tourNodes.length) {
+                    resetZoom();
+                    return;
+                }
+                const n = tourNodes[tourIndex];
+                openPanel(n);
+                focusOnNode(n);
+                tourIndex++;
+            }
+
+            nextTourStep();
+        };
+
+        // Arrastre de Nodos (Drag)
+        function dragstarted(event, d) {
+            if (!event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
+        }
+
+        function dragged(event, d) {
+            d.fx = event.x;
+            d.fy = event.y;
+        }
+
+        function dragended(event, d) {
+            if (!event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+
+        // Ajustar en cambio de tamaño de ventana
+        window.addEventListener("resize", () => {
+            simulation.force("center", d3.forceCenter(window.innerWidth / 2, window.innerHeight / 2)).restart();
+        });
+    </script>
+</body>
+</html>
